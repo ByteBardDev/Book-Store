@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up & Sign In</title>
+  <style>
+    /* Global styles */
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      height: 100%;
+      background: url('https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-hero.jpg');
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Background Section */
+    .hero {
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Pseudo-element for Blurred Background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-hero.jpg') no-repeat center center/cover;
+      filter: blur(10px);
+      z-index: -1; /* Ensure the pseudo-element is behind other content */
+    }
+
+    /* Overlay Box */
+    .overlay {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      color: white;
+    }
+
+    /* Form Container */
+    .form-container {
+      width: 100%;
+    }
+
+    h2 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      font-size: 1.1em;
+    }
+
+    .input-field {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-field input {
+      width: 100%;
+      padding: 12px 40px;
+      border-radius: 5px;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .input-field input::placeholder {
+      color: #ddd;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #218838;
+    }
+
+    .toggle-link {
+      margin-top: 15px;
+    }
+
+    .toggle-link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .toggle-link a:hover {
+      text-decoration: underline;
+    }
+
+    #validation-message {
+      color: red;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
+    /* Media Queries for Responsive Design */
+    @media (max-width: 768px) {
+      .overlay {
+        width: 90%;
+      }
+    }
+  </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <!-- Sign Up Section -->
+  <div class="hero">
+    <div class="overlay" id="signup-section">
+      <div class="form-container">
+        <h2>Register Yourself</h2>
+        <p>Join our community today!</p>
+        <form id="sign-up-form" onsubmit="handleSignUp(event)">
+          <div class="input-field">
+            <input type="text" id="username" placeholder="Username" required>
+          </div>
+          <div class="input-field">
+            <input type="email" id="email" placeholder="Email" required>
+          </div>
+          <div class="input-field">
+            <input type="password" id="password" placeholder="Password" required>
+          </div>
+          <div class="input-field">
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+          </div>
+          <div id="validation-message"></div>
+          <button type="submit" class="btn">Sign Up</button>
+        </form>
+        <div class="toggle-link">
+          <p>Already have an account? <a href="#" onclick="toggleForm('signin')">Log In</a></p>
+        </div>
+        <!-- Google Sign-In Button -->
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"  <!-- Replace with your Client ID -->
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+      </div>
+    </div>
+
+    <!-- Sign In Section -->
+    <div class="overlay" id="signin-section" style="display: none;">
+      <div class="form-container">
+        <h2>Welcome Back</h2>
+        <p>Log into your account</p>
+        <form id="sign-in-form" onsubmit="handleSignIn(event)">
+          <div class="input-field">
+            <input type="text" id="signin-username" placeholder="Username" required>
+          </div>
+          <div class="input-field">
+            <input type="password" id="signin-password" placeholder="Password" required>
+          </div>
+          <button type="submit" class="btn">Log In</button>
+        </form>
+        <div class="toggle-link">
+          <p>Don't have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a></p>
+        </div>
+        <!-- Google Sign-In Button -->
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"  <!-- Replace with your Client ID -->
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Function to toggle between Sign Up and Sign In forms
+    function toggleForm(type) {
+      const signupSection = document.getElementById('signup-section');
+      const signinSection = document.getElementById('signin-section');
+
+      if (type === 'signup') {
+        signupSection.style.display = 'block';
+        signinSection.style.display = 'none';
+      } else {
+        signupSection.style.display = 'none';
+        signinSection.style.display = 'block';
+      }
+    }
+
+    // Handle Sign Up with pop up and redirect to Sign In
+    function handleSignUp(event) {
+      event.preventDefault();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const validationMessage = document.getElementById('validation-message');
+
+      if (password !== confirmPassword) {
+        validationMessage.textContent = "Passwords don't match!";
+        return false;
+      } else {
+        validationMessage.textContent = "";
+        // Simulate a success pop-up message
+        alert('Sign Up Successful! Redirecting to Log In...');
+        // Redirect to sign-in form after successful sign-up
+        toggleForm('signin');
+      }
+    }
+
+    // Handle Sign In and redirect to index.html
+    function handleSignIn(event) {
+      event.preventDefault();
+      const username = document.getElementById('signin-username').value;
+      const password = document.getElementById('signin-password').value;
+
+      if (username && password) {
+        // Simulate a successful login pop-up
+        alert('Logged In Successfully! Redirecting to home...');
+        // Redirect to index.html after successful login
+        window.location.href = 'courseData.html';
+      } else {
+        alert('Invalid username or password');
+      }
+    }
+
+    // Initialize Google Sign-In client
+    window.onload = function() {
+      google.accounts.id.initialize({
+        client_id: '8975256834-aamv49ru0tt8s433ujv10ahrofa1sbq9.apps.googleusercontent.com', // Replace with your Google Client ID
+        callback: handleCredentialResponse
+      });
+
+      google.accounts.id.renderButton(
+        document.querySelectorAll(".g_id_signin"),
+        { theme: "outline", size: "large" }
+      );
+
+      google.accounts.id.prompt(); // Prevents auto-prompt
+    }
+
+    function handleCredentialResponse(response) {
+      // Handle the response from Google Sign-In here
+      const userObject = jwt_decode(response.credential); // You might need to include jwt-decode library
+      alert('User Signed In with Google! Welcome ' + userObject.name);
+      // Redirect or process user information here
+    }
+  </script>
+
+</body>
+</html>
